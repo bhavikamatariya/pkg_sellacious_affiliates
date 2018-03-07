@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="basic" label="COM_AFFILIATES_CATEGORY_FIELDSET_BASIC">
+		<field
+			name="id"
+			type="hidden"
+			default="0"
+			readonly="true"
+			/>
+		<field
+			name="title"
+			type="text"
+			label="COM_AFFILIATES_CATEGORY_FIELD_TITLE_LABEL"
+			description="COM_AFFILIATES_CATEGORY_FIELD_TITLE_DESC"
+			class="inputbox"
+			required="true"
+			/>
+		<field
+			name="alias"
+			type="text"
+			label="COM_AFFILIATES_CATEGORY_FIELD_ALIAS_LABEL"
+			description="COM_AFFILIATES_CATEGORY_FIELD_ALIAS_DESC"
+			class="inputbox"
+			/>
+		<field
+			name="parent_id"
+			type="categoryParent"
+			label="COM_AFFILIATES_CATEGORY_FIELD_PARENT_LABEL"
+			description="COM_AFFILIATES_CATEGORY_FIELD_PARENT_DESC"
+			required="true"
+			>
+			<option value="1">JNONE</option>
+		</field>
+		<field
+			name="state"
+			type="radio"
+			label="COM_AFFILIATES_CATEGORY_FIELD_STATUS_LABEL"
+			description="COM_AFFILIATES_CATEGORY_FIELD_STATUS_DESC"
+			required="true"
+			default="1"
+			>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+		</field>
+		<field
+			name="description"
+			type="editor"
+			label="COM_AFFILIATES_CATEGORY_FIELD_DESCRIPTION_LABEL"
+			description="COM_AFFILIATES_CATEGORY_FIELD_DESCRIPTION_DESC"
+			rows="10"
+			height="400"
+			filter="safehtml"
+			class="inputbox"
+			/>
+	</fieldset>
+	<fieldset name="affiliate" label="COM_AFFILIATES_CATEGORY_FIELDSET_COMMISSION" addfieldpath="/sellacious/components/com_affiliates/models/fields">
+		<field
+				name="affiliate_commission"
+				type="CategoryCommission"
+				label="COM_AFFILIATES_CATEGORY_FIELD_COMMISSION_LABEL"
+				description="COM_AFFILIATES_CATEGORY_FIELD_COMMISSION_DESC"
+				currency="global"
+		/>
+	</fieldset>
+</form>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+	<name>com_affiliates</name>
+	<author>Bhavika Matariya</author>
+	<creationDate>March 05, 2018</creationDate>
+	<copyright>Copyright (C) 2012-2018 Bhartiy Web Technologies. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>info@bhartiy.com</authorEmail>
+	<authorUrl>www.bhartiy.com</authorUrl>
+	<version>1.0.0</version>
+	<description>COM_AFFILIATES_XML_DESCRIPTION</description>
+	<scriptfile>install.php</scriptfile>
+	<install>
+		<sql>
+			<file driver="mysqli" charset="utf8">sql/com_affiliates.install.mysqli.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysqli" charset="utf8">sql/com_affiliates.uninstall.mysqli.sql</file>
+		</sql>
+	</uninstall>
+	<!--<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysqli</schemapath>
+		</schemas>
+	</update>-->
+	<sellacious>
+		<files folder="sellacious">
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>language</folder>
+			<folder>layouts</folder>
+			<folder>models</folder>
+			<folder>views</folder>
+			<filename>access.xml</filename>
+			<filename>affiliates.php</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+		</files>
+	</sellacious>
+	<media folder="media" destination="com_affiliates">
+		<folder>css</folder>
+		<folder>js</folder>
+	</media>
+	<administration>
+		<files folder="administrator">
+			<folder>language</folder>
+			<folder>sql</folder>
+			<filename>affiliates.php</filename>
+		</files>
+	</administration>
+	<files folder="site">
+		<folder>tables</folder>
+	</files>
+</extension>

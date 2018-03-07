@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<access component="com_affiliates">
+	<section name="component">
+		<actions name="affiliates" title="COM_AFFILIATES_ACTIONS_CRUCIAL">
+			<action name="affiliates.manage" title="COM_AFFILIATES_ACTION_MANAGE_LABEL" description="COM_AFFILIATES_ACTION_MANAGE_DESC"/>
+		</actions>
+	</section>
+</access>
