@@ -20,11 +20,11 @@
 			<file driver="mysqli" charset="utf8">sql/com_affiliates.uninstall.mysqli.sql</file>
 		</sql>
 	</uninstall>
-	<!--<update>
+	<update>
 		<schemas>
 			<schemapath type="mysql">sql/updates/mysqli</schemapath>
 		</schemas>
-	</update>-->
+	</update>
 	<sellacious>
 		<files folder="sellacious">
 			<folder>controllers</folder>

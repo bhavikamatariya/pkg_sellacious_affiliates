@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_category_commissions` (
   `product_catid` int(11) NOT NULL,
   `affiliate_catid` int(11) NOT NULL,
   `commission` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  UNIQUE KEY `seller_catid` (`affiliate_catid`,`product_catid`)
+  UNIQUE KEY `affiliate_catid` (`affiliate_catid`,`product_catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
@@ -52,5 +52,5 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_user_commissions` (
   `product_catid` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `commission` varchar(15) CHARACTER SET utf8mb4 NOT NULL,
-  UNIQUE KEY `seller_catid` (`user_id`,`product_catid`)
+  UNIQUE KEY `affiliate_catid` (`user_id`,`product_catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
