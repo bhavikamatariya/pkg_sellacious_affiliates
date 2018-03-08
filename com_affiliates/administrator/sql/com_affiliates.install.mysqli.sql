@@ -10,10 +10,6 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_categories` (
   `state` tinyint(1) NOT NULL,
   `lft` int(11) NOT NULL DEFAULT '0',
   `rgt` int(11) NOT NULL,
-  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_default` int(11) NOT NULL DEFAULT '0',
-  `usergroups` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ledgergroup` int(11) NOT NULL,
   `commission` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` int(11) NOT NULL,
@@ -37,20 +33,33 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
   `affid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mobile` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `website` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `currency` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_visits` int(11) NOT NULL DEFAULT '0',
+	`total_registered` int(11) NOT NULL DEFAULT '0',
+	`total_sales` int(11) NOT NULL DEFAULT '0',
   `state` tinyint(1) NOT NULL,
   `ordering` int(11) NOT NULL DEFAULT '0',
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_by` int(11) NOT NULL,
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` int(11) NOT NULL,
-  `cache_state` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__affiliates_user_commissions` (
   `product_catid` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `aff_uid` int(11) NOT NULL,
   `commission` varchar(15) CHARACTER SET utf8mb4 NOT NULL,
-  UNIQUE KEY `affiliate_catid` (`user_id`,`product_catid`)
+  UNIQUE KEY `affiliate_catid` (`aff_uid`,`product_catid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__affiliates_banners` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `state` tinyint(1) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` int(11) NOT NULL,
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

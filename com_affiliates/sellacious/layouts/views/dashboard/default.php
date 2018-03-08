@@ -15,21 +15,48 @@ JHtml::_('jquery.framework');
 ?>
 <div>
 	<?php if ($this->isAffiliate && !empty($this->affData->affid)): ?>
-		<div>
+		<div class="left">
 			<h2><?php echo JText::plural('COM_AFFILIATES_DASHBOARD_WELCOME_AFFILIATE', Jfactory::getUser($this->affData->user_id)->name) ?></h2>
 		</div>
 
-		<label>
-			<strong><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL') ?></strong>
-			<input type="text" readonly value="<?php echo JUri::root(). '?affid=' . $this->affData->affid; ?>" class="inputbox" size="80">
-		</label>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="col-sm-3 text-center">
+					<h3>Total Visitors</h3>
+					<span><?php echo $this->affData->total_visits; ?></span>
+				</div>
+				<div class="col-sm-3 text-center">
+					<h3>Total Registered</h3>
+					<span><?php echo $this->affData->total_registered; ?></span>
+				</div>
+				<div class="col-sm-3 text-center">
+					<h3>Total Commission Earned</h3>
+					<span><?php echo $this->affData->total_sales; ?></span>
+				</div>
+			</div>
+		</div>
 
-		<label>
-			<strong><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_GENERATOR') ?></strong>
-			<input type="text" class="inputbox" id="url-generator" value="" size="80" placeholder="Paste any valid sellacious URL and create your affiliate URL.">
-			<span class="red-note" id="error-note"><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_INVALID') ?></span>
-			<button type="button" id="generate-url"><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_GO') ?></button>
-		</label>
+		<br><br>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="col-sm-2">
+					<strong><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL') ?></strong>
+				</div>
+				<div class="col-sm-8">
+					<input type="text" readonly value="<?php echo JUri::root(). '?affid=' . $this->affData->affid; ?>" class="inputbox" size="80">
+				</div>
+			</div>
+			<div class="col-sm-12">
+				<div class="col-sm-2">
+					<strong><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_GENERATOR') ?></strong>
+				</div>
+				<div class="col-sm-8">
+					<input type="text" class="inputbox" id="url-generator" value="" size="80" placeholder="Paste any valid sellacious URL and create your affiliate URL.">
+					<button type="button" id="generate-url"><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_GO') ?></button>
+					<span class="red-note" id="error-note"><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_URL_INVALID') ?></span>
+				</div>
+			</div>
+		</div>
 	<?php else: ?>
 		<h4><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_USER_INVALID') ?></h4>
 	<?php endif; ?>

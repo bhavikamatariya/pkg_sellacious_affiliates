@@ -79,7 +79,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 		{
 			$tables = array(
 				array('#__affiliates_profiles', 'user_id'),
-				array('#__affiliates_user_commissions', 'user_id', array('user_id > 0')),
+				array('#__affiliates_user_commissions', 'aff_uid', array('aff_uid > 0')),
 			);
 
 			$queries = array();
@@ -221,7 +221,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 						if (!$zero)
 						{
 							$query->insert('#__affiliates_user_commissions')
-								->columns('user_id, product_catid, commission')
+								->columns('aff_uid, product_catid, commission')
 								->values(implode(', ', $this->_db->q(array($affUid, $productCatid, $commission))));
 
 							$this->_db->setQuery($query)->execute();
@@ -233,7 +233,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 						if ($zero)
 						{
 							$query->delete('#__affiliates_user_commissions')
-								->where('user_id = ' . $this->_db->q($affUid))
+								->where('aff_uid = ' . $this->_db->q($affUid))
 								->where('product_catid = ' . $this->_db->q($productCatid));
 
 							$this->_db->setQuery($query)->execute();
@@ -243,7 +243,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 						{
 							$query->update('#__affiliates_user_commissions')
 								->set('commission = ' . $this->_db->q($commission))
-								->where('user_id = ' . $this->_db->q($affUid))
+								->where('aff_uid = ' . $this->_db->q($affUid))
 								->where('product_catid = ' . $this->_db->q($productCatid));
 
 							$this->_db->setQuery($query)->execute();
@@ -533,7 +533,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 
 		$query->select('product_catid, commission')
 			->from('#__affiliates_user_commissions')
-			->where('user_id = ' . $this->_db->q($affUid));
+			->where('aff_uid = ' . $this->_db->q($affUid));
 
 		$items  = $this->_db->setQuery($query)->loadObjectList();
 		$result = ArrayHelper::getColumn((array) $items, 'commission', 'product_catid');

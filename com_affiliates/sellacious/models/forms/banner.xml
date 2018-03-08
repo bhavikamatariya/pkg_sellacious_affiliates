@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="basic" label="COM_AFFILIATES_BANNER_FIELDSET_BASIC">
+		<field
+			name="id"
+			type="hidden"
+			default="0"
+			readonly="true"
+			/>
+		<field
+			name="title"
+			type="text"
+			label="COM_AFFILIATES_BANNER_FIELD_TITLE_LABEL"
+			description="COM_AFFILIATES_BANNER_FIELD_TITLE_DESC"
+			class="inputbox"
+			required="true"
+			/>
+		<field
+			name="image"
+			type="fileList"
+			label="COM_AFFILIATES_BANNER_FIELD_IMAGE_LABEL"
+			description="COM_AFFILIATES_BANNER_FIELD_IMAGE_DESC"
+			class="inputbox"
+			required="true"
+			directory="images/banners"
+			/>
+		<field
+			name="state"
+			type="radio"
+			label="COM_AFFILIATES_BANNER_FIELD_STATUS_LABEL"
+			description="COM_AFFILIATES_BANNER_FIELD_STATUS_DESC"
+			required="true"
+			default="1"
+			>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+		</field>
+	</fieldset>
+</form>
