@@ -30,6 +30,12 @@ foreach ($this->items as $i => $item) :
 			<?php endif; ?>
 		</td>
 
+		<?php if ($this->isAffiliate && !empty($this->affData->affid)): ?>
+			<td class="nowrap">
+				<textarea readonly  cols="90" rows="1"><a href="<?php echo $item->url . '?affid=' . (string)$this->affData->affid . '&affbannerid=' . (int)$item->id; ?>"><img src="<?php echo JUri::root() . '/images/banners/' . $item->image ?>"></a></textarea>
+			</td>
+		<?php endif; ?>
+
 		<td class="center hidden-phone">
 			<span><?php echo (int) $item->id; ?></span>
 		</td>

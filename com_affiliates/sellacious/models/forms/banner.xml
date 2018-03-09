@@ -25,6 +25,15 @@
 			directory="images/banners"
 			/>
 		<field
+			name="url"
+			type="url"
+			label="COM_AFFILIATES_BANNER_FIELD_URL_LABEL"
+			description="COM_AFFILIATES_BANNER_FIELD_URL_DESC"
+			class="inputbox"
+			filter="url"
+			required="true"
+			/>
+		<field
 			name="state"
 			type="radio"
 			label="COM_AFFILIATES_BANNER_FIELD_STATUS_LABEL"

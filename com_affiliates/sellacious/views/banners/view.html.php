@@ -44,4 +44,57 @@ class AffiliatesViewBanners extends SellaciousViewList
 	 * @since   1.0.0
 	 */
 	protected $is_nested = false;
+
+	/**
+	 * @var  stdClass[]
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $affData;
+
+	/**
+	 * @var  bool
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $isAffiliate = false;
+
+	/**
+	 * @param null $tpl
+	 *
+	 * @return mixed
+	 *
+	 * @since version
+	 * @throws Exception
+	 */
+	public function display($tpl = null)
+	{
+		$me = JFactory::getUser();
+		$affiliate = $this->getAffiliate($me->id);
+
+		if (!empty($affiliate))
+		{
+			$this->isAffiliate = true;
+			$this->affData = $affiliate;
+		}
+
+		return parent::display($tpl);
+	}
+
+	/**
+	 * @param $userId
+	 *
+	 * @return mixed
+	 *
+	 * @since version
+	 */
+	public static function getAffiliate($userId)
+	{
+		$db = JFactory::getDbo();
+		$select = $db->getQuery(true);
+
+		$select->select('a.*')
+			->from('#__affiliates_profiles a')
+			->where('user_id = ' . (int) $userId);
+
+		return $db->setQuery($select)->loadObject();
+	}
 }

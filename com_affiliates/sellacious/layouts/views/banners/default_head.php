@@ -13,14 +13,19 @@ defined('_JEXEC') or die;
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
 ?>
+<tr>
 	<th class="nowrap center" style="width:1%;">
 		<?php echo JHtml::_('searchtools.sort', 'JSTATUS', 'a.state', $listDirn, $listOrder); ?>
 	</th>
 	<th class="nowrap">
 		<?php echo JHtml::_('searchtools.sort', 'JGLOBAL_TITLE', 'a.title', $listDirn, $listOrder); ?>
 	</th>
-
+	<?php if ($this->isAffiliate && !empty($this->affData->affid)): ?>
+		<th class="nowrap">
+			<?php echo JText::_('Banner Html'); ?>
+		</th>
+	<?php endif; ?>
 	<th class="nowrap hidden-phone" style="width: 1%;">
 		<?php echo JHtml::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
 	</th>
-
+</tr>

@@ -40,11 +40,12 @@ class AffiliatesViewDashboard extends SellaciousView
 	public function display($tpl = null)
 	{
 		$me = JFactory::getUser();
-		$affiliate = $this->getAffiliate($me->id);
+		$isAdmin = $me->authorise('core.admin');
+		$affiliate = $this->getAffiliate($me->id, $isAdmin);
 
 		if (!empty($affiliate))
 		{
-			$this->isAffiliate = true;
+			$this->isAffiliate = $isAdmin ? false : true;
 			$this->affData = $affiliate;
 		}
 
@@ -53,20 +54,29 @@ class AffiliatesViewDashboard extends SellaciousView
 
 	/**
 	 * @param $userId
+	 * @param $isAdmin
 	 *
 	 * @return mixed
 	 *
 	 * @since version
 	 */
-	public static function getAffiliate($userId)
+	public static function getAffiliate($userId, $isAdmin)
 	{
 		$db = JFactory::getDbo();
 		$select = $db->getQuery(true);
 
 		$select->select('a.*')
-			->from('#__affiliates_profiles a')
-			->where('user_id = ' . (int) $userId);
+			->from('#__affiliates_profiles a');
 
-		return $db->setQuery($select)->loadObject();
+		if ($isAdmin)
+		{
+			return $db->setQuery($select)->loadObjectList();
+		}
+		else
+		{
+			$select->where('user_id = ' . (int) $userId);
+
+			return $db->setQuery($select)->loadObject();
+		}
 	}
 }
