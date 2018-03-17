@@ -35,21 +35,10 @@ class JFormFieldCategoryList extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-		// This may be called from outer context so load helpers explicitly.
-		jimport('sellacious.loader');
-
-		if (!class_exists('SellaciousHelper'))
-		{
-			JFactory::getApplication()->enqueueMessage('COM_SELLACIOUS_LIBRARY_NOT_FOUND', 'error');
-
-			return parent::getOptions();
-		}
-
-
 		$db		= JFactory::getDbo();
 		$query	= $db->getQuery(true);
 
-		$query->select('a.id, a.title, a.type, a.level, a.lft, a.rgt')
+		$query->select('a.id, a.title, a.level, a.lft, a.rgt')
 			->from($db->qn('#__affiliates_categories').' AS a')
 			->where('a.level > 0')
 			->where('a.state = 1');
@@ -66,14 +55,13 @@ class JFormFieldCategoryList extends JFormFieldList
 			$items = array();
 		}
 
-		$show  = (string) $this->element['show_all'] == 'true';
 		$options = array();
 
 		foreach ($items as $item)
 		{
 			// We enable only leaf nodes for selection
 			$level   = ($item->level > 1) ? (str_repeat('|&mdash; ', $item->level - 1)) : '';
-			$disable = $show ? false : ($item->rgt - $item->lft) > 1;
+			$disable = ($item->rgt - $item->lft) > 1;
 
 			$options[] = JHtml::_('select.option', $item->id, $level . $item->title, 'value', 'text', $disable);
 		}

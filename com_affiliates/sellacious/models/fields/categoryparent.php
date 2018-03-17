@@ -46,7 +46,7 @@ class JFormFieldCategoryParent extends JFormFieldList
 		$id     = $this->form->getValue('id');
 		$table->load($id);
 
-		$query->select('a.id, a.title, a.type')
+		$query->select('a.id, a.title')
 				->from($db->qn('#__affiliates_categories').' AS a')
 				->where('a.level > 0')
 				->where('a.state = 1')

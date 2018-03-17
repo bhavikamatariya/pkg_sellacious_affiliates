@@ -22,7 +22,7 @@ class AffiliatesViewCategories extends SellaciousViewList
 	 *
 	 * @since   1.0.0
 	 */
-	protected $action_prefix = 'category';
+	protected $action_prefix = 'affiliate.category';
 
 	/**
 	 * @var  string

@@ -21,7 +21,7 @@ class AffiliatesViewBanner extends SellaciousViewForm
 	 * @var  string
 	 * @since __DEPLOY_VERSION__
 	 */
-	protected $action_prefix = 'banner';
+	protected $action_prefix = 'affiliate.banner';
 
 	/**
 	 * @var  string

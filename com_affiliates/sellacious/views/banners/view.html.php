@@ -22,7 +22,7 @@ class AffiliatesViewBanners extends SellaciousViewList
 	 *
 	 * @since   1.0.0
 	 */
-	protected $action_prefix = 'banner';
+	protected $action_prefix = 'affiliate.banner';
 
 	/**
 	 * @var  string

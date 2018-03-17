@@ -52,7 +52,7 @@ class AffiliatesControllerBanner extends SellaciousControllerForm
 	 */
 	protected function allowAdd($data = array())
 	{
-		return $this->helper->access->check('banner.create');
+		return $this->helper->access->check('affiliate.banner.create');
 	}
 
 	/**
@@ -69,6 +69,6 @@ class AffiliatesControllerBanner extends SellaciousControllerForm
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
-		return $this->helper->access->check('banner.edit');
+		return $this->helper->access->check('affiliate.banner.edit');
 	}
 }

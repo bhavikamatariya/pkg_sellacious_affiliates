@@ -11,28 +11,10 @@
 defined('_JEXEC') or die;
 
 /**
- * View to edit
+ * View class for a list of Banners.
  *
- * @since __DEPLOY_VERSION__
+ * @since   1.0.0
  */
-
-class AffiliatesViewUser extends SellaciousViewForm
+class AffiliatesViewBanners extends SellaciousView
 {
-	/**
-	 * @var  string
-	 * @since __DEPLOY_VERSION__
-	 */
-	protected $action_prefix = 'affiliate.user';
-
-	/**
-	 * @var  string
-	 * @since __DEPLOY_VERSION__
-	 */
-	protected $view_item = 'user';
-
-	/**
-	 * @var  string
-	 * @since __DEPLOY_VERSION__
-	 */
-	protected $view_list = 'users';
 }

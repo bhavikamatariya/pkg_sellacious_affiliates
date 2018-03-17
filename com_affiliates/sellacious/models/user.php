@@ -21,6 +21,27 @@ use Joomla\Utilities\ArrayHelper;
 class AffiliatesModelUser extends SellaciousModelAdmin
 {
 	/**
+	 * @var AffiliatesHelperAffiliates|string
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $affHelper = '';
+
+	/**
+	 * AffiliatesModelUser constructor.
+	 *
+	 * @param array $config
+	 *
+	 * @throws Exception
+	 * @s
+	 */
+	public function __construct(array $config = array())
+	{
+		$this->affHelper = AffiliatesHelperAffiliates::getInstance();
+
+		parent::__construct($config);
+	}
+
+	/**
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return  mixed  The data for the form.
@@ -44,7 +65,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 
 			// Add profile info
 			$profile = $this->getProfile($data->get('id'));
-			$profile->commission = $this->getCommissions($data->get('id'));
+			$profile->commission = $this->affHelper->getCommissions($data->get('id'));
 			$data->set('profile', $profile);
 		}
 
@@ -181,7 +202,8 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 
 		unset($data['profile']);
 
-		$isNew = empty($data['id']);
+		$pk    = $this->getState('user.id', $data['id']);
+		$isNew = empty($pk);
 		$user  = $this->saveUser($data);
 
 		if (!($user instanceof JUser))
@@ -206,7 +228,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 			if (!empty($affCommissions))
 			{
 				$affUid = $user->id;
-				$commissions = $this->getCommissions($affUid);
+				$commissions = $this->affHelper->getCommissions($affUid);
 
 				foreach ($affCommissions as $productCatid => $commission)
 				{
@@ -255,6 +277,8 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 
 		$dispatcher = $this->helper->core->loadPlugins();
 		$dispatcher->trigger('onContentAfterSave', array('com_affiliates.user', $user, $isNew));
+
+		$this->setState('user.id', $user->id);
 
 		return $user->id;
 	}
@@ -330,7 +354,7 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		return $this->helper->access->check('user.delete');
+		return $this->helper->access->check('affiliate.user.delete');
 	}
 
 	/**
@@ -348,7 +372,6 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 
 		return parent::getForm($data, $loadData);
 	}
-
 
 	/**
 	 * Saves the manually set order of records.
@@ -508,37 +531,14 @@ class AffiliatesModelUser extends SellaciousModelAdmin
 		$data['user_id'] = $user_id;
 
 		$data  = array_merge((array) $profile, $data);
-
 		$table = $this->getTable('Profile');
 
 		$table->bind($data);
+
 		$table->check();
 		$table->store();
 
 		return true;
-	}
-
-	/**
-	 * Fetch seller commissions for the given seller for each product category maps
-	 *
-	 * @param   int  $affUid  Seller user id
-	 *
-	 * @return  array  Commissions for each product category
-	 *
-	 * @since   1.5.0
-	 */
-	public function getCommissions($affUid)
-	{
-		$query = $this->_db->getQuery(true);
-
-		$query->select('product_catid, commission')
-			->from('#__affiliates_user_commissions')
-			->where('aff_uid = ' . $this->_db->q($affUid));
-
-		$items  = $this->_db->setQuery($query)->loadObjectList();
-		$result = ArrayHelper::getColumn((array) $items, 'commission', 'product_catid');
-
-		return $result;
 	}
 
 	/**

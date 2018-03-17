@@ -54,7 +54,7 @@ class AffiliatesControllerCategories extends SellaciousControllerAdmin
 		// Check for request forgeries
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
-		$allowed = $this->helper->access->check('category.rebuild');
+		$allowed = $this->helper->access->check('affiliate.category.rebuild');
 
 		$this->setRedirect(JRoute::_('index.php?option=com_affiliates&view=categories', false));
 

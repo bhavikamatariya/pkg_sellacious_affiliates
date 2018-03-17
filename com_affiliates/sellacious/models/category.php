@@ -20,6 +20,27 @@ use Joomla\Utilities\ArrayHelper;
 class AffiliatesModelCategory extends SellaciousModelAdmin
 {
 	/**
+	 * @var AffiliatesHelperAffiliates|string
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $affHelper = '';
+
+	/**
+	 * AffiliatesModelUser constructor.
+	 *
+	 * @param array $config
+	 *
+	 * @throws Exception
+	 * @since 1.0.0
+	 */
+	public function __construct(array $config = array())
+	{
+		$this->affHelper = AffiliatesHelperAffiliates::getInstance();
+
+		parent::__construct($config);
+	}
+
+	/**
 	 * Method to get a table object, load it if necessary.
 	 *
 	 * @param   string  $name     The table name. Optional.
@@ -57,7 +78,7 @@ class AffiliatesModelCategory extends SellaciousModelAdmin
 			return false;
 		}
 
-		return $this->helper->access->check('category.delete');
+		return $this->helper->access->check('affiliate.category.delete');
 	}
 
 	/**
@@ -71,7 +92,7 @@ class AffiliatesModelCategory extends SellaciousModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		return $this->helper->access->check('category.edit.state');
+		return $this->helper->access->check('affiliate.category.edit.state');
 	}
 
 	/**
@@ -154,7 +175,7 @@ class AffiliatesModelCategory extends SellaciousModelAdmin
 		if (isset($affiliateCommission))
 		{
 			$affCatid = $table->get('id');
-			$commissions = $this->getCommissionsByCategory($affCatid);
+			$commissions = $this->affHelper->getCommissionsByCategory($affCatid);
 
 			foreach ($affiliateCommission as $productCatid => $commission)
 			{
@@ -267,34 +288,11 @@ class AffiliatesModelCategory extends SellaciousModelAdmin
 
 		if (is_object($data))
 		{
-			$rates = $this->getCommissionsByCategory($data->id);
+			$rates = $this->affHelper->getCommissionsByCategory($data->id);
 
 			$data->affiliate_commission = $rates;
 
 			$data = ArrayHelper::fromObject($data);
 		}
-	}
-
-	/**
-	 * Fetch seller commissions for the given category maps
-	 *
-	 * @param   int  $catid  Seller category id
-	 *
-	 * @return  array  Commissions for each product category
-	 *
-	 * @since   1.5.0
-	 */
-	public function getCommissionsByCategory($catid)
-	{
-		$query = $this->_db->getQuery(true);
-
-		$query->select('product_catid, commission')
-			->from('#__affiliates_category_commissions')
-			->where('affiliate_catid = ' . $this->_db->q($catid));
-
-		$items  = $this->_db->setQuery($query)->loadObjectList();
-		$result = ArrayHelper::getColumn((array) $items, 'commission', 'product_catid');
-
-		return $result;
 	}
 }

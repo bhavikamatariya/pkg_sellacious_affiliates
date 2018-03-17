@@ -1,3 +1,17 @@
+CREATE TABLE IF NOT EXISTS `#__affiliates_banners` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_views` int(11) NOT NULL,
+  `total_clicks` int(11) NOT NULL,
+  `state` tinyint(1) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_by` int(11) NOT NULL,
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `#__affiliates_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -17,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_categories` (
   `modified_by` int(11) NOT NULL,
   `params` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__affiliates_category_commissions` (
   `product_catid` int(11) NOT NULL,
@@ -33,9 +47,10 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
   `affid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mobile` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `website` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `total_visits` int(11) NOT NULL DEFAULT '0',
-	`total_registered` int(11) NOT NULL DEFAULT '0',
-	`total_sales` int(11) NOT NULL DEFAULT '0',
+  `total_visits` int(11) NOT NULL,
+  `total_registered` int(11) NOT NULL,
+  `total_sales` int(11) NOT NULL,
+  `commission` double NOT NULL,
   `state` tinyint(1) NOT NULL,
   `ordering` int(11) NOT NULL DEFAULT '0',
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -43,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `modified_by` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__affiliates_user_commissions` (
   `product_catid` int(11) NOT NULL,
@@ -52,15 +67,16 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_user_commissions` (
   UNIQUE KEY `affiliate_catid` (`aff_uid`,`product_catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__affiliates_banners` (
+CREATE TABLE IF NOT EXISTS `#__affiliates_user_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `image` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `state` tinyint(1) NOT NULL,
+  `aff_uid` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_price` double NOT NULL,
+  `commission` double NOT NULL,
+  `context` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `aff_url` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ip_address` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `created_by` int(11) NOT NULL,
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `modified_by` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

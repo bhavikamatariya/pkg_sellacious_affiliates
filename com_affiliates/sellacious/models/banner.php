@@ -57,7 +57,7 @@ class AffiliatesModelBanner extends SellaciousModelAdmin
 			return false;
 		}
 
-		return $this->helper->access->check('banner.delete');
+		return $this->helper->access->check('affiliate.banner.delete');
 	}
 
 	/**
@@ -71,7 +71,7 @@ class AffiliatesModelBanner extends SellaciousModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		return $this->helper->access->check('banner.edit.state');
+		return $this->helper->access->check('affiliate.banner.edit.state');
 	}
 
 	/**
@@ -160,6 +160,27 @@ class AffiliatesModelBanner extends SellaciousModelAdmin
 		JForm::addFormPath(dirname(__DIR__) . '/models/forms');
 
 		return parent::getForm($data, $loadData);
+	}
+
+	/**
+	 * Override preprocessForm to load the sellacious plugin group instead of content.
+	 *
+	 * @param   JForm   $form   A form object.
+	 * @param   mixed   $data   The data expected for the form.
+	 * @param   string  $group  Plugin group to load
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0.0
+	 */
+	protected function preprocessForm(JForm $form, $data, $group = 'sellacious')
+	{
+		$obj     = is_array($data) ? ArrayHelper::toObject($data) : $data;
+
+		if ($obj->id)
+		{
+			$form->setFieldAttribute('image', 'record_id', $obj->id);
+		}
 	}
 
 	/**

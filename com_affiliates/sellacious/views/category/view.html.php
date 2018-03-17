@@ -21,7 +21,7 @@ class AffiliatesViewCategory extends SellaciousViewForm
 	 * @var  string
 	 * @since __DEPLOY_VERSION__
 	 */
-	protected $action_prefix = 'category';
+	protected $action_prefix = 'affiliate.category';
 
 	/**
 	 * @var  string

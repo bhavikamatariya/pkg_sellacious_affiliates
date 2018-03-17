@@ -28,7 +28,6 @@
 	<sellacious>
 		<files folder="sellacious">
 			<folder>controllers</folder>
-			<folder>helpers</folder>
 			<folder>language</folder>
 			<folder>layouts</folder>
 			<folder>models</folder>
@@ -51,6 +50,12 @@
 		</files>
 	</administration>
 	<files folder="site">
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+		<folder>layouts</folder>
 		<folder>tables</folder>
+		<folder>views</folder>
+		<filename>affiliates.php</filename>
+		<filename>controller.php</filename>
 	</files>
 </extension>

@@ -21,7 +21,7 @@ class AffiliatesViewUsers extends SellaciousViewList
 	 * @var  string
 	 * @since __DEPLOY_VERSION__
 	 */
-	protected $action_prefix = 'user';
+	protected $action_prefix = 'affiliate.user';
 
 	/**
 	 * @var  string
@@ -78,7 +78,7 @@ class AffiliatesViewUsers extends SellaciousViewList
 			}
 		}
 
-		if ($this->is_nested && $this->helper->access->check('user.list'))
+		if ($this->is_nested && $this->helper->access->check('affiliate.user.list'))
 		{
 			JToolBarHelper::custom($this->view_list . '.rebuild', 'refresh.png', 'refresh_f2.png', 'JTOOLBAR_REBUILD', false);
 		}

@@ -17,6 +17,11 @@ defined('_JEXEC') or die;
  */
 class AffiliatesTableProfile extends SellaciousTable
 {
+	public static function getInstance($type, $prefix = 'AffiliatesTable', $config = array())
+	{
+		return parent::getInstance($type, $prefix, $config);
+	}
+
 	/**
 	 * Constructor
 	 *
@@ -55,8 +60,19 @@ class AffiliatesTableProfile extends SellaciousTable
 	{
 		$conditions = parent::getUniqueConditions();
 
-		$conditions['user_id'] = array('user_id' => $this->get('user_id'));
+		$conditions['affid'] = array('affid' => $this->get('affid'));
 
 		return $conditions;
 	}
+
+	protected function getUniqueError($uk_index, JTable $table)
+	{
+		if ($uk_index == 'affid')
+		{
+			return 'AffId exists. Please try another.';
+		}
+
+		return false;
+	}
+
 }

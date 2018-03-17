@@ -13,12 +13,12 @@ defined('_JEXEC') or die;
 $i    = $this->current_item;
 $item = $this->items[$i];
 
-$canCreate = $this->helper->access->check('category.create');
-$canEdit   = $this->helper->access->check('category.edit', $item->id);
-$canChange = $this->helper->access->check('category.edit.state', $item->id);
+$canCreate = $this->helper->access->check('affiliate.category.create');
+$canEdit   = $this->helper->access->check('affiliate.category.edit', $item->id);
+$canChange = $this->helper->access->check('affiliate.category.edit.state', $item->id);
 ?>
 	<td class="nowrap center">
-		<span class="btn-round"><?php echo JHtml::_('jgrid.published', $item->state, $i, 'categories.', $canChange && $item->is_default != '1');?></span>
+		<span class="btn-round"><?php echo JHtml::_('jgrid.published', $item->state, $i, 'categories.', $canChange);?></span>
 	</td>
 
 	<td class="nowrap left">

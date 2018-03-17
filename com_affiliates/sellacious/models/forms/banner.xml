@@ -16,24 +16,6 @@
 			required="true"
 			/>
 		<field
-			name="image"
-			type="fileList"
-			label="COM_AFFILIATES_BANNER_FIELD_IMAGE_LABEL"
-			description="COM_AFFILIATES_BANNER_FIELD_IMAGE_DESC"
-			class="inputbox"
-			required="true"
-			directory="images/banners"
-			/>
-		<field
-			name="url"
-			type="url"
-			label="COM_AFFILIATES_BANNER_FIELD_URL_LABEL"
-			description="COM_AFFILIATES_BANNER_FIELD_URL_DESC"
-			class="inputbox"
-			filter="url"
-			required="true"
-			/>
-		<field
 			name="state"
 			type="radio"
 			label="COM_AFFILIATES_BANNER_FIELD_STATUS_LABEL"
@@ -41,8 +23,19 @@
 			required="true"
 			default="1"
 			>
-			<option value="1">JPUBLISHED</option>
-			<option value="0">JUNPUBLISHED</option>
+		<option value="1">JPUBLISHED</option>
+		<option value="0">JUNPUBLISHED</option>
 		</field>
+		<field
+			name="image"
+			type="fileplus"
+			label="COM_AFFILIATES_BANNER_FIELD_IMAGE_LABEL"
+			description="COM_AFFILIATES_BANNER_FIELD_IMAGE_DESC"
+			class="inputbox"
+			accept=".jpg,.png,.gif"
+			context="affiliate.banner.image"
+			filter="unset"
+			limit="1"
+			/>
 	</fieldset>
 </form>

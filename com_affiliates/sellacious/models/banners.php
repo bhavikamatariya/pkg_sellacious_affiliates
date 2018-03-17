@@ -33,6 +33,8 @@ class AffiliatesModelBanners extends SellaciousModelList
 				'id', 'a.id',
 				'title', 'a.title',
 				'alias', 'a.alias',
+				'total_clicks', 'a.total_clicks',
+				'total_views', 'a.total_views',
 				'state', 'a.state',
 			);
 		}

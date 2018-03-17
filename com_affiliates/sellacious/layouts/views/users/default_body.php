@@ -29,8 +29,8 @@ if ($saveOrder)
 }
 
 foreach ($this->items as $i => $item) :
-	$canEdit   = $this->helper->access->check('user.edit', $item->id);
-	$canChange = $this->helper->access->check('user.edit.state', $item->id);
+	$canEdit   = $this->helper->access->check('affiliate.user.edit', $item->id);
+	$canChange = $this->helper->access->check('affiliate.user.edit.state', $item->id);
 	?>
 	<tr role="row">
 		<td class="order nowrap center hidden-phone">

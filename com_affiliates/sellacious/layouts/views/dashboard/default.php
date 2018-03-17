@@ -12,6 +12,9 @@ defined('_JEXEC') or die;
 
 /** @var $this AffiliatesViewDashboard */
 JHtml::_('jquery.framework');
+
+$helper = SellaciousHelper::getInstance();
+$currency     = $helper->currency->current('code_3');
 ?>
 <div>
 	<div class="left">
@@ -23,16 +26,20 @@ JHtml::_('jquery.framework');
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="col-sm-3 text-center">
-						<h3>Total Visitors</h3>
+						<h3><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_VISITORS') ?></h3>
 						<span><?php echo $this->affData->total_visits; ?></span>
 					</div>
 					<div class="col-sm-3 text-center">
-						<h3>Total Registered</h3>
+						<h3><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_REGISTERED') ?></h3>
 						<span><?php echo $this->affData->total_registered; ?></span>
 					</div>
 					<div class="col-sm-3 text-center">
-						<h3>Total Commission Earned</h3>
+						<h3><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_SALES') ?></h3>
 						<span><?php echo $this->affData->total_sales; ?></span>
+					</div>
+					<div class="col-sm-3 text-center">
+						<h3><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_COMMISSIONS') ?></h3>
+						<span><?php echo $this->affData->commission . ' ' . $currency; ?></span>
 					</div>
 				</div>
 			</div>
@@ -58,7 +65,6 @@ JHtml::_('jquery.framework');
 					</div>
 				</div>
 			</div>
-
 			<script type="text/javascript">
 				jQuery(document).ready(function ($) {
 					$('#error-note').hide();
@@ -82,33 +88,34 @@ JHtml::_('jquery.framework');
 				});
 			</script>
 		<?php else: ?>
-			<div>
+			<!--<div>
 				<div class="left"><h4>Banner Stats</h4></div>
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="col-sm-3 text-center">
 							<h3>Most Used</h3>
-							<span><?php //echo $this->affData->total_visits; ?></span>
+							<span><?php /*//echo $this->affData->total_visits; */?></span>
 						</div>
 						<div class="col-sm-3 text-center">
 							<h3>Most Views</h3>
-							<span><?php //echo $this->affData->total_registered; ?></span>
+							<span><?php /*//echo $this->affData->total_registered; */?></span>
 						</div>
 						<div class="col-sm-3 text-center">
 							<h3>Most Clicks</h3>
-							<span><?php //echo $this->affData->total_sales; ?></span>
+							<span><?php /*//echo $this->affData->total_sales; */?></span>
 						</div>
 					</div>
 				</div>
-			</div>
+			</div>-->
 			<div><br>
 				<h4>Affiliate Wise stats</h4><br>
 				<table class="table">
 					<tr>
-						<th>Affiliate User</th>
-						<th>Total Visits</th>
-						<th>Total Registered</th>
-						<th>Total Commission Earned</th>
+						<th><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_USERNAME') ?></th>
+						<th><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_VISITORS') ?></th>
+						<th><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_REGISTERED') ?></th>
+						<th><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_SALES') ?></th>
+						<th><?php echo JText::_('COM_AFFILIATES_DASHBOARD_AFFILIATE_TOTAL_COMMISSIONS') ?></th>
 					</tr>
 				<?php foreach ($this->affData as $affData) : ?>
 					<tr>
@@ -116,6 +123,7 @@ JHtml::_('jquery.framework');
 						<td><?php echo $affData->total_visits; ?></td>
 						<td><?php echo $affData->total_registered; ?></td>
 						<td><?php echo $affData->total_sales; ?></td>
+						<td><?php echo $affData->commission . ' ' . $currency; ?></td>
 					</tr>
 				<?php endforeach; ?>
 				</table>
@@ -123,7 +131,4 @@ JHtml::_('jquery.framework');
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
-
-
-
 <?php

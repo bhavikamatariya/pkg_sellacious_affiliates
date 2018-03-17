@@ -52,7 +52,7 @@ class AffiliatesControllerCategory extends SellaciousControllerForm
 	 */
 	protected function allowAdd($data = array())
 	{
-		return $this->helper->access->check('category.create');
+		return $this->helper->access->check('affiliate.category.create');
 	}
 
 	/**
@@ -69,6 +69,6 @@ class AffiliatesControllerCategory extends SellaciousControllerForm
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
-		return $this->helper->access->check('category.edit');
+		return $this->helper->access->check('affiliate.category.edit');
 	}
 }

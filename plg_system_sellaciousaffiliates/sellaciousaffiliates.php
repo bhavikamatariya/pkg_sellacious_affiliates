@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die;
 
+JLoader::register('AffiliatesHelperAffiliates', JPATH_SITE . '\components\com_affiliates\helpers\affiliates.php');
+
 /**
  * Plugin class for affiliates handling.
  *
@@ -32,6 +34,36 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 	 * @since  3.4
 	 */
 	protected $app;
+
+	/**
+	 * @var SellaciousHelper
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $helper;
+
+	/**
+	 * @var AffiliatesHelperAffiliates
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $affHelper;
+
+	/**
+	 * PlgSystemSellaciousAffiliates constructor.
+	 *
+	 * @param       $subject
+	 * @param array $config
+	 *
+	 * @throws Exception
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public function __construct($subject, array $config = array())
+	{
+		$this->helper = SellaciousHelper::getInstance();
+		$this->affHelper = AffiliatesHelperAffiliates::getInstance();
+
+		parent::__construct($subject, $config);
+	}
 
 	/**
 	 * This method logs the user visits.
@@ -59,23 +91,55 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 
 		$uri   = JUri::getInstance();
 		$affId = $uri->getVar('affid', null);
+		$affBannerId = $uri->getVar('affbannerid', null);
 
-		if (empty($affId))
+		if (!empty($affId))
 		{
-			return;
+			$affData = $this->getAffiliate($affId);
+
+			if ($affData->id > 0)
+			{
+				$jInput = $this->app->input;
+				$path   = JUri::root(true) ?: '/';
+				$expiry = strtotime(JFactory::getDate('+1 days'));
+
+				$jInput->cookie->set('sellacious_affiliate_affid', $affId, $expiry, $path);
+
+				$data               = new stdClass;
+				$data->id           = $affData->id;
+				$data->total_visits = $affData->total_visits + 1;
+
+				$log          = new stdClass;
+				$log->aff_uid = $affData->user_id;
+				$log->context = 'user.visit';
+
+				$this->saveLog($data, $log);
+			}
 		}
 
-		$affData = $this->getAffiliate($affId);
-
-		if ($affData->id > 0)
+		if (!empty($affBannerId))
 		{
-			$jInput = $this->app->input;
-			$path   = JUri::root(true) ?: '/';
-			$expiry = strtotime(JFactory::getDate('+1 days'));
+			$affBannerFlag = $uri->getVar('bannerflag', null);
 
-			$jInput->cookie->set('sellacious_affiliate_affid', $affId, $expiry, $path);
+			if ($affBannerId > 0 && $affBannerFlag)
+			{
+				$db = JFactory::getDbo();
+				$update = $db->getQuery(true);
+				$update->update('#__affiliates_banners')
+					->set('total_clicks = total_clicks + 1')
+					->where('id = ' . (int)$affBannerId);
+				try
+				{
+					$db->setQuery($update)->execute();
+				}
+				catch (Exception $e){}
 
-			$this->saveLog($affData, $affData->total_visits + 1, 0, 'user.visit', JFactory::getUser()->get('id'));
+				$log          = new stdClass;
+				$log->aff_uid = isset($affData->id) && $affData->user_id > 0 ? $affData->user_id : 0;
+				$log->context = 'banner.clicked';
+
+				$this->saveLog(null, $log);
+			}
 		}
 
 		return;
@@ -121,7 +185,15 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 
 			if ($affData->id > 0)
 			{
-				$this->saveLog($affData, 0, $affData->total_registered + 1, 'user.registered', $user['id']);
+				$data                   = new stdClass;
+				$data->id               = $affData->id;
+				$data->total_registered = $affData->total_registered + 1;
+
+				$log          = new stdClass;
+				$log->aff_uid = $affData->user_id;
+				$log->context = 'user.registered';
+
+				$this->saveLog($data, $log);
 
 				$path = JUri::root(true) ?: '/';
 				$jInput->cookie->set('sellacious_affiliate_affid', '', 1, $path);
@@ -129,6 +201,81 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 		}
 
 		return;
+	}
+
+	/**
+	 * This method sends add log when a affiliate made a sale.
+	 *
+	 * @param   string $context The calling context
+	 * @param   object $payment Holds the payment object from the payments table for the target order
+	 *
+	 * @return  bool
+	 * @throws  Exception
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function onAfterOrderPayment($context, $payment)
+	{
+		if ($context == 'com_sellacious.order')
+		{
+			$jInput    = $this->app->input;
+			$affCookie = $jInput->cookie->getString('sellacious_affiliate_affid', null);
+
+			if (!empty($affCookie))
+			{
+				$affData = $this->getAffiliate($affCookie);
+
+				if (empty($affData))
+				{
+					return true;
+				}
+
+				$affHelper = AffiliatesHelperAffiliates::getInstance();
+				$totalSales = 0;
+				$totalComm = array();
+				$items     = $this->helper->order->getOrderItems($payment->order_id);
+
+				if (!empty($items))
+				{
+					foreach ($items as $item)
+					{
+						list($comm_amount, $comm_rate, $is_percent) = $affHelper->getAffiliateCommissions($item, $affData);
+
+						if (abs($comm_amount) >= 0.01)
+						{
+							$finalComm = $comm_amount * $item->quantity;
+
+							$totalSales++;
+							$totalComm[] = $finalComm;
+
+							$log                = new stdClass;
+							$log->aff_uid       = $affData->user_id;
+							$log->context       = 'order.placed';
+							$log->product_code  = $item->item_uid;
+							$log->product_price = $item->basic_price;
+							$log->commission    = $finalComm;
+
+							$this->saveLog(null, $log);
+						}
+					}
+
+					if ($totalSales > 0 && !empty($totalComm))
+					{
+						$data              = new stdClass;
+						$data->id          = $affData->id;
+						$data->total_sales = $affData->total_sales + $totalSales;
+						$data->commission  = $affData->commission + array_sum($totalComm);
+
+						$this->saveLog($data, null);
+					}
+
+					$path = JUri::root(true) ?: '/';
+					$jInput->cookie->set('sellacious_affiliate_affid', '', 1, $path);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -164,60 +311,52 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 	/**
 	 * Save log of affiliate links
 	 *
-	 * @param $affData
-	 * @param $totalVisits
-	 * @param $totalRegistered
-	 * @param $context
-	 * @param $userId
+	 * @param $data
+	 * @param $log
 	 *
 	 * @throws Exception
 	 *
 	 * @since __DEPLOY_VERSION__
 	 */
-	public static function saveLog($affData, $totalVisits, $totalRegistered, $context, $userId)
+	public static function saveLog($data, $log)
 	{
 		$app = JFactory::getApplication();
 
 		JTable::addIncludePath(JPATH_SITE . '/components/com_affiliates/tables');
-		$table = JTable::getInstance('Profile', 'AffiliatesTable');
-
-		$data     = new stdClass;
-		$data->id = $affData->id;
-
-		if ($totalVisits > 0)
-		{
-			$data->total_visits = $totalVisits;
-		}
-
-		if ($totalRegistered > 0)
-		{
-			$data->total_registered = $totalRegistered;
-		}
-
-		$log      = new stdClass;
-		$logTable = JTable::getInstance('UserLog', 'AffiliatesTable');
-
-		$log->aff_uid    = $affData->user_id;
-		$log->user_id    = $userId;
-		$log->context    = $context;
-		$log->aff_url    = JUri::root();
-		$log->ip_address = $app->input->server->getString('REMOTE_ADDR');
 
 		try
 		{
-			$table->bind((array) $data);
-			$table->check();
-			$table->store();
+			if (!empty($data))
+			{
+				$table    = JTable::getInstance('Profile', 'AffiliatesTable');
 
-			$logTable->bind((array) $log);
-			$logTable->check();
-			$logTable->store();
+				$table->bind((array) $data);
+				$table->check();
+				$table->store();
+			}
 		}
 		catch (Exception $e)
 		{
 			JLog::add(JText::sprintf('PLG_SYSTEM_AFFILIATES_TRACK_SESSION_ERROR', $e->getMessage()), JLog::NOTICE);
+		}
 
-			return;
+		try
+		{
+			if (!empty($log))
+			{
+				$logTable = JTable::getInstance('UserLog', 'AffiliatesTable');
+
+				$log->user_id    = JFactory::getUser()->get('id');
+				$log->aff_url    = JUri::root();
+				$log->ip_address = $app->input->server->getString('REMOTE_ADDR');
+				$logTable->bind((array) $log);
+				$logTable->check();
+				$logTable->store();
+			}
+		}
+		catch (Exception $e)
+		{
+			JLog::add(JText::sprintf('PLG_SYSTEM_AFFILIATES_TRACK_SESSION_ERROR', $e->getMessage()), JLog::NOTICE);
 		}
 	}
 }
