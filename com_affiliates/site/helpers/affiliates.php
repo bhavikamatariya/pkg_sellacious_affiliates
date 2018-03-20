@@ -44,7 +44,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	 * Get an instance of helper class.
 	 * Create one if not already, otherwise return existing instance
 	 *
-	 * @param   string  $name  Name of the helper class
+	 * @param   string $name Name of the helper class
 	 *
 	 * @return  AffiliatesHelperAffiliates
 	 * @throws  Exception
@@ -79,11 +79,10 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 		return self::$helpers[$key];
 	}
 
-
 	/**
 	 * Fetch seller commissions for the given seller for each product category maps
 	 *
-	 * @param   int  $affUid  Seller user id
+	 * @param   int $affUid Seller user id
 	 *
 	 * @return  array  Commissions for each product category
 	 *
@@ -91,7 +90,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	 */
 	public function getCommissions($affUid)
 	{
-		$db = JFactory::getDbo();
+		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select('product_catid, commission')
@@ -107,7 +106,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	/**
 	 * Fetch seller commissions for the given category maps
 	 *
-	 * @param   int  $catid  Seller category id
+	 * @param   int $catid Seller category id
 	 *
 	 * @return  array  Commissions for each product category
 	 *
@@ -115,7 +114,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	 */
 	public function getCommissionsByCategory($catid)
 	{
-		$db = JFactory::getDbo();
+		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select('product_catid, commission')
@@ -131,8 +130,8 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	/**
 	 * Calculate the effective seller commission for the selected order item (seller > seller_category > global)
 	 *
-	 * @param   stdClass  $item     The order item to check for
-	 * @param   stdClass       $affiliate  The order id to check for
+	 * @param   stdClass $item      The order item to check for
+	 * @param   stdClass $affiliate The order id to check for
 	 *
 	 * @return  array
 	 *
@@ -140,9 +139,9 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	 */
 	public function getAffiliateCommissions($item, $affiliate)
 	{
-		$helper = SellaciousHelper::getInstance();
+		$helper     = SellaciousHelper::getInstance();
 		$basicPrice = $item->basic_price;
-		$affUid  = $affiliate->user_id;
+		$affUid     = $affiliate->user_id;
 		$productId  = $item->product_id;
 
 		// We'll use inheritance if a category is not mapped
@@ -189,9 +188,9 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	/**
 	 * Pick the best commission rate (minimum) for the seller's sale
 	 *
-	 * @param   string[]  $commissions     The commissions array from which to pick
-	 * @param   int[][]   $categoriesList  The product categories id groups each for the inheritance level for each assigned category
-	 * @param   float     $basicPrice      The effective sales price on which to calculate commission
+	 * @param   string[] $commissions    The commissions array from which to pick
+	 * @param   int[][]  $categoriesList The product categories id groups each for the inheritance level for each assigned category
+	 * @param   float    $basicPrice     The effective sales price on which to calculate commission
 	 *
 	 * @return  array
 	 * @since   1.5.0
@@ -207,7 +206,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 		{
 			if (!is_array($categories))
 			{
-				$categories = (array)$categories;
+				$categories = (array) $categories;
 			}
 			// Iterate for each parent upward for the assigned category in this iteration
 			foreach ($categories as $categoryId)
@@ -235,12 +234,11 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 		return array($bestA, $bestR, $bestP);
 	}
 
-
 	/**
 	 * Return a list of parent items for given item or items. Only available for nested set tables
 	 *
-	 * @param   int|int[]  $pks        Item id or a list of ids for which parents are to be found
-	 * @param   bool       $inclusive  Whether the output list should contain the queried ids as well
+	 * @param   int|int[] $pks       Item id or a list of ids for which parents are to be found
+	 * @param   bool      $inclusive Whether the output list should contain the queried ids as well
 	 *
 	 * @return  int[]
 	 * @throws  UnexpectedValueException
@@ -259,7 +257,7 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 				$table = JTable::getInstance('Category', 'AffiliatesTable');
 				$table->load($pk);
 
-				$db = JFactory::getDbo();
+				$db     = JFactory::getDbo();
 				$select = $db->getQuery(true);
 				$select->select('a.id')
 					->from('#__affiliates_categories a')
@@ -291,18 +289,34 @@ class AffiliatesHelperAffiliates extends SellaciousHelperBase
 	 */
 	public function countBannerViews($bannerId)
 	{
-		$db = JFactory::getDbo();
+		$db     = JFactory::getDbo();
 		$update = $db->getQuery(true);
 
 		$update->update('#__affiliates_banners')
 			->set('total_views = total_views + 1')
-			->where('id = ' . (int)$bannerId);
+			->where('id = ' . (int) $bannerId);
 
 		try
 		{
 			$db->setQuery($update)->execute();
+
+			JTable::addIncludePath(JPATH_SITE . '/components/com_affiliates/tables');
+			$logTable = JTable::getInstance('Log', 'AffiliatesTable');
+
+			$log             = new stdClass;
+			$log->banner_id  = $bannerId;
+			$log->context    = 'banner.viewed';
+			$log->user_id    = JFactory::getUser()->get('id');
+			$log->aff_url    = JUri::root();
+			$log->ip_address = JFactory::getApplication()->input->server->getString('REMOTE_ADDR');
+
+			$logTable->bind((array) $log);
+			$logTable->check();
+			$logTable->store();
 		}
-		catch (Exception $e){}
+		catch (Exception $e)
+		{
+		}
 
 		return true;
 	}

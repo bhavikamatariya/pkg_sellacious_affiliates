@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="COM_AFFILIATES_SYS_REGISTER_VIEW_DEFAULT_TITLE">
+		<message>
+			<![CDATA[COM_AFFILIATES_SYS_REGISTER_VIEW_DEFAULT_DESC]]>
+		</message>
+	</layout>
+	<fields name="request">
+		<fieldset name="request" addfieldpath="components/com_affiliates/models/fields">
+			<field
+				name="catid" type="categoryList"
+				label="COM_AFFILIATES_FIELD_SELECT_CATEGORY_LABEL"
+				description="COM_AFFILIATES_FIELD_SELECT_CATEGORY_DESC"
+				required="true"
+			>
+				<option vaue=""> </option>
+			</field>
+		</fieldset>
+	</fields>
+</metadata>

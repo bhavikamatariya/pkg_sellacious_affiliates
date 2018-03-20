@@ -104,6 +104,9 @@ class AffiliatesController extends SellaciousControllerBase
 			case 'banner':
 				$allow = $this->helper->access->check('affiliate.banner.edit');
 				break;
+			case 'commissions':
+				$allow = $this->helper->access->check('affiliate.commission.list');
+				break;
 			default:
 				$allow = false;
 		}

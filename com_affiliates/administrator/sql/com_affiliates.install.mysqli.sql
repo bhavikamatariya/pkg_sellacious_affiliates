@@ -40,6 +40,37 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_category_commissions` (
   UNIQUE KEY `affiliate_catid` (`affiliate_catid`,`product_catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `#__affiliates_commissions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `aff_uid` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `variant_id` int(11) NOT NULL,
+  `seller_uid` int(11) NOT NULL,
+  `basic_price` double NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `affiliate_commission` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `commission_amount` double NOT NULL,
+  `is_approved` int(11) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__affiliates_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `aff_uid` int(11) NOT NULL,
+  `banner_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `product_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_price` double NOT NULL,
+  `commission` double NOT NULL,
+  `context` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `aff_url` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ip_address` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -50,7 +81,8 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_profiles` (
   `total_visits` int(11) NOT NULL,
   `total_registered` int(11) NOT NULL,
   `total_sales` int(11) NOT NULL,
-  `commission` double NOT NULL,
+  `approved_commission` double NOT NULL,
+  `tentative_commission` double NOT NULL,
   `state` tinyint(1) NOT NULL,
   `ordering` int(11) NOT NULL DEFAULT '0',
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -66,17 +98,3 @@ CREATE TABLE IF NOT EXISTS `#__affiliates_user_commissions` (
   `commission` varchar(15) CHARACTER SET utf8mb4 NOT NULL,
   UNIQUE KEY `affiliate_catid` (`aff_uid`,`product_catid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `#__affiliates_user_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `aff_uid` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `product_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_price` double NOT NULL,
-  `commission` double NOT NULL,
-  `context` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `aff_url` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ip_address` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="basic" label="COM_AFFILIATES_PROFILE_FIELDSET_BASIC">
+		<field
+				name="name"
+				type="text"
+				description="COM_AFFILIATES_PROFILE_USER_FIELD_NAME_DESC"
+				label="COM_AFFILIATES_PROFILE_USER_FIELD_NAME_LABEL"
+				class="inputbox"
+				required="true"
+				size="30"
+		/>
+		<field
+				name="username"
+				type="text"
+				description="COM_AFFILIATES_PROFILE_USER_FIELD_USERNAME_DESC"
+				label="COM_AFFILIATES_PROFILE_USER_FIELD_USERNAME_LABEL"
+				class="inputbox"
+				required="true"
+				size="30"
+				message="COM_AFFILIATES_PROFILE_USER_FIELD_USERNAME_INVALID_MSG"
+		/>
+		<field
+				name="email"
+				type="email"
+				description="COM_AFFILIATES_PROFILE_USER_FIELD_EMAIL_DESC"
+				autocomplete="off"
+				label="JGLOBAL_EMAIL"
+				class="inputbox"
+				required="true"
+				size="30"
+				validate="email"
+		/>
+		<field
+				name="password"
+				type="password"
+				autocomplete="off"
+				class="validate-password inputbox"
+				description="COM_AFFILIATES_PROFILE_USER_FIELD_PASSWORD_DESC"
+				filter="raw"
+				validate="password"
+				label="JGLOBAL_PASSWORD"
+				size="30"
+		/>
+		<field
+				name="password2"
+				type="password"
+				autocomplete="off"
+				class="validate-password inputbox"
+				description="COM_AFFILIATES_PROFILE_USER_FIELD_PASSWORD2_DESC"
+				filter="raw"
+				label="COM_AFFILIATES_PROFILE_USER_FIELD_PASSWORD2_LABEL"
+				size="30"
+				validate="equals"
+				field="password"
+		/>
+	</fieldset>
+
+	<fields name="profile">
+		<fieldset name="basic" label="COM_SELLACIOUS_PROFILE_FIELDSET_BASIC">
+			<field
+					name="affid"
+					type="text"
+					description="COM_AFFILIATES_PROFILE_USER_FIELD_AFFID_DESC"
+					label="COM_AFFILIATES_PROFILE_USER_FIELD_AFFID_LABEL"
+					class="inputbox"
+					required="true"
+					size="30"
+					message="COM_AFFILIATES_PROFILE_USER_FIELD_AFFID_INVALID_MSG"
+			/>
+			<field
+					name="mobile"
+					type="text"
+					label="COM_AFFILIATES_PROFILE_FIELD_MOBILE_LABEL"
+					description="COM_AFFILIATES_PROFILE_FIELD_MOBILE_DESC"
+					class="inputbox medium-input"
+					size="60"
+			/>
+			<field
+					name="website"
+					type="text"
+					label="COM_AFFILIATES_PROFILE_FIELD_WEBSITE_LABEL"
+					description="COM_AFFILIATES_PROFILE_FIELD_WEBSITE_DESC"
+					class="inputbox medium-input"
+					size="60"
+					validate="url"
+			/>
+			<field
+				name="category_id"
+				type="hidden"
+				readonly="true"
+			/>
+		</fieldset>
+	</fields>
+
+	<fields name="params">
+		<fieldset name="basic" label="COM_SELLACIOUS_PROFILE_FIELDSET_BASIC">
+			<field
+					name="timezone"
+					type="timezone"
+					label="COM_AFFILIATES_PROFILE_USER_FIELD_TIMEZONE_LABEL"
+					description="COM_AFFILIATES_PROFILE_USER_FIELD_TIMEZONE_DESC"
+					class="medium-input"
+			>
+				<option value="">JOPTION_USE_DEFAULT</option>
+			</field>
+		</fieldset>
+	</fields>
+</form>

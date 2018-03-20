@@ -59,10 +59,36 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 	 */
 	public function __construct($subject, array $config = array())
 	{
-		$this->helper = SellaciousHelper::getInstance();
+		$this->helper    = SellaciousHelper::getInstance();
 		$this->affHelper = AffiliatesHelperAffiliates::getInstance();
 
 		parent::__construct($subject, $config);
+	}
+
+	/**
+	 * Adds order email template fields to the sellacious form for creating email templates
+	 *
+	 * @param   JForm $form The form to be altered.
+	 * @param   array $data The associated data for the form.
+	 *
+	 * @since   3.0
+	 * @return  boolean
+	 */
+	public function onContentPrepareForm($form, $data)
+	{
+		if (!$form instanceof JForm)
+		{
+			$this->_subject->setError('JERROR_NOT_A_FORM');
+
+			return false;
+		}
+
+		if ($form->getName() == 'com_sellacious.config')
+		{
+			$form->loadFile(__DIR__ . '/forms/form.xml', false);
+		}
+
+		return true;
 	}
 
 	/**
@@ -89,9 +115,16 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 			return;
 		}
 
-		$uri   = JUri::getInstance();
-		$affId = $uri->getVar('affid', null);
+		$uri         = JUri::getInstance();
+		$affId       = $uri->getVar('affid', null);
 		$affBannerId = $uri->getVar('affbannerid', null);
+		$view        = $uri->getVar('view', null);
+		$layout      = $uri->getVar('layout', null);
+
+		if ($view == 'banners' && $layout == 'image')
+		{
+			return;
+		}
 
 		if (!empty($affId))
 		{
@@ -111,7 +144,7 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 
 				$log          = new stdClass;
 				$log->aff_uid = $affData->user_id;
-				$log->context = 'user.visit';
+				$log->context = 'user.viewed';
 
 				$this->saveLog($data, $log);
 			}
@@ -123,20 +156,24 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 
 			if ($affBannerId > 0 && $affBannerFlag)
 			{
-				$db = JFactory::getDbo();
+				$db     = JFactory::getDbo();
 				$update = $db->getQuery(true);
 				$update->update('#__affiliates_banners')
 					->set('total_clicks = total_clicks + 1')
-					->where('id = ' . (int)$affBannerId);
+					->where('id = ' . (int) $affBannerId);
 				try
 				{
 					$db->setQuery($update)->execute();
 				}
-				catch (Exception $e){}
+				catch (Exception $e)
+				{
+					JLog::add($e->getMessage(), JLog::NOTICE);
+				}
 
-				$log          = new stdClass;
-				$log->aff_uid = isset($affData->id) && $affData->user_id > 0 ? $affData->user_id : 0;
-				$log->context = 'banner.clicked';
+				$log            = new stdClass;
+				$log->aff_uid   = isset($affData->id) && $affData->user_id > 0 ? $affData->user_id : 0;
+				$log->banner_id = $affBannerId;
+				$log->context   = 'banner.clicked';
 
 				$this->saveLog(null, $log);
 			}
@@ -230,10 +267,11 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 					return true;
 				}
 
-				$affHelper = AffiliatesHelperAffiliates::getInstance();
-				$totalSales = 0;
-				$totalComm = array();
-				$items     = $this->helper->order->getOrderItems($payment->order_id);
+				$affHelper   = AffiliatesHelperAffiliates::getInstance();
+				$totalSales  = 0;
+				$totalComm   = array();
+				$items       = $this->helper->order->getOrderItems($payment->order_id);
+				$autoApprove = $this->helper->config->get('auto_approved_affiliates_commissions');
 
 				if (!empty($items))
 				{
@@ -243,6 +281,7 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 
 						if (abs($comm_amount) >= 0.01)
 						{
+							$rate      = $is_percent ? $comm_rate . '%' : $comm_rate . ' ' . $payment->currency;
 							$finalComm = $comm_amount * $item->quantity;
 
 							$totalSales++;
@@ -256,6 +295,29 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 							$log->commission    = $finalComm;
 
 							$this->saveLog(null, $log);
+
+							$comm                       = new stdClass;
+							$comm->aff_uid              = $affData->user_id;
+							$comm->user_id              = JFactory::getUser()->id;
+							$comm->product_id           = $item->product_id;
+							$comm->variant_id           = $item->variant_id;
+							$comm->seller_uid           = $item->seller_uid;
+							$comm->basic_price          = $item->basic_price;
+							$comm->quantity             = $item->quantity;
+							$comm->affiliate_commission = $rate;
+							$comm->commission_amount    = $finalComm;
+							$comm->is_approved          = $autoApprove;
+							$comm->created              = JFactory::getDate()->toSql();
+
+							try
+							{
+								$db = JFactory::getDbo();
+								$db->insertObject('#__affiliates_commissions', $comm);
+							}
+							catch (Exception $e)
+							{
+								JLog::add($e->getMessage(), JLog::NOTICE);
+							}
 						}
 					}
 
@@ -264,7 +326,15 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 						$data              = new stdClass;
 						$data->id          = $affData->id;
 						$data->total_sales = $affData->total_sales + $totalSales;
-						$data->commission  = $affData->commission + array_sum($totalComm);
+
+						if ($autoApprove)
+						{
+							$data->approved_commission = $affData->approved_commission + array_sum($totalComm);
+						}
+						else
+						{
+							$data->tentative_commission = $affData->tentative_commission + array_sum($totalComm);
+						}
 
 						$this->saveLog($data, null);
 					}
@@ -303,6 +373,7 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 		}
 		catch (Exception $e)
 		{
+			JLog::add($e->getMessage(), JLog::NOTICE);
 		}
 
 		return $affData;
@@ -328,7 +399,7 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 		{
 			if (!empty($data))
 			{
-				$table    = JTable::getInstance('Profile', 'AffiliatesTable');
+				$table = JTable::getInstance('Profile', 'AffiliatesTable');
 
 				$table->bind((array) $data);
 				$table->check();
@@ -344,7 +415,7 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 		{
 			if (!empty($log))
 			{
-				$logTable = JTable::getInstance('UserLog', 'AffiliatesTable');
+				$logTable = JTable::getInstance('Log', 'AffiliatesTable');
 
 				$log->user_id    = JFactory::getUser()->get('id');
 				$log->aff_url    = JUri::root();
@@ -357,6 +428,83 @@ class PlgSystemSellaciousAffiliates extends JPlugin
 		catch (Exception $e)
 		{
 			JLog::add(JText::sprintf('PLG_SYSTEM_AFFILIATES_TRACK_SESSION_ERROR', $e->getMessage()), JLog::NOTICE);
+		}
+	}
+
+	/**
+	 * Listener for the `onAfterRender` event
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function onAfterRender()
+	{
+		if (!$this->app->isClient('site'))
+		{
+			return;
+		}
+
+		$now        = JFactory::getDate();
+		$paymentDay = $this->helper->config->get('affiliates_payment_day');
+		$currentDay = $now->format('d');
+
+		if ($paymentDay == $currentDay)
+		{
+			$currency = $this->helper->currency->current('code_3');
+			$db       = JFactory::getDbo();
+
+			$select = $db->getQuery(true);
+			$select->select('SUM(commission_amount) AS amount, aff_uid')
+				->from('#__affiliates_commissions')
+				->where('is_approved = 1')
+				->group('aff_uid');
+
+			try
+			{
+				$commissions = $db->setQuery($select)->loadObjectList();
+
+				foreach ($commissions as $commission)
+				{
+					if (abs($commission->amount) >= 0.01 && $commission->aff_uid)
+					{
+						$amount = number_format($commission->amount, 2);
+						$transactions = array(
+							(object) array(
+								'id'         => null,
+								'context'    => 'user.id',
+								'context_id' => $commission->aff_uid,
+								'reason'     => 'affilate.commission',
+								'crdr'       => 'cr',
+								'amount'     => $amount,
+								'currency'   => $currency,
+								'balance'    => $amount,
+								'txn_date'   => $now->toSql(),
+								'notes'      => 'Add fund (' . $amount . ' ' . $currency . ') into wallet for user ' . $commission->aff_uid . ' on ' . $now . '.',
+								'state'      => 1,
+							)
+						);
+
+						$this->helper->transaction->register($transactions);
+
+						$update = $db->getQuery(true);
+						$update->update('#__affiliates_profiles')
+							->set('approved_commission = 0')
+							->where('user_id = ' . (int) $commission->aff_uid);
+						$db->setQuery($update)->execute();
+
+						$update = $db->getQuery(true);
+						$update->update('#__affiliates_commissions')
+							->set('is_approved = -1')
+							->where('aff_uid = ' . (int) $commission->aff_uid);
+						$db->setQuery($update)->execute();
+					}
+				}
+			}
+			catch (Exception $e)
+			{
+				JLog::add($e->getMessage(), JLog::WARNING, 'jerror');
+			}
 		}
 	}
 }

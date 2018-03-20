@@ -10,6 +10,7 @@
 <version>1.0.0</version>
 <description>PLG_SYSTEM_SELLACIOUSAFFILIATES_XML_DESCRIPTION</description>
 <files>
+	<folder>forms</folder>
 	<folder>language</folder>
 	<filename plugin="sellaciousaffiliates">sellaciousaffiliates.php</filename>
 </files>

@@ -76,7 +76,33 @@ class AffiliatesViewDashboard extends SellaciousView
 		{
 			$select->where('user_id = ' . (int) $userId);
 
-			return $db->setQuery($select)->loadObject();
+			$result = $db->setQuery($select)->loadObject();
+			$result->userCommission = array();
+			$result->catCommission = array();
+
+			if (!empty($result->user_id))
+			{
+				$select = $db->getQuery(true);
+				$select->select('uc.product_catid, uc.commission, sc.title AS category_title, sc.level')
+					->from('#__affiliates_user_commissions uc')
+					->join('left', '#__sellacious_categories sc ON sc.id = uc.product_catid')
+					->where('uc.aff_uid = ' . (int) $result->user_id);
+
+				$result->userCommission = $db->setQuery($select)->loadObjectList();
+			}
+
+			if (!empty($result->category_id))
+			{
+				$select = $db->getQuery(true);
+				$select->select('uc.product_catid, uc.commission, sc.title AS category_title, sc.level')
+					->from('#__affiliates_category_commissions uc')
+					->join('left', '#__sellacious_categories sc ON sc.id = uc.product_catid')
+					->where('uc.affiliate_catid = ' . (int) $result->category_id);
+
+				$result->catCommission = $db->setQuery($select)->loadObjectList();
+			}
+
+			return $result;
 		}
 	}
 }

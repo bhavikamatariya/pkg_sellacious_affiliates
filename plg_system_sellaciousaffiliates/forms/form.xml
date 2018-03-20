@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="com_sellacious">
+		<fieldset name="com_sellacious-affiliates" label="PLG_SYSTEM_SELLACIOUSAFFILIATES_AFFILIATES_CONFIG_FIELDSET">
+			<field
+					name="auto_approved_affiliates_commissions"
+					type="radio"
+					class="inputbox w30p"
+					default="1"
+					label="PLG_SYSTEM_SELLACIOUSAFFILIATES_FIELD_AUTO_APPROVED_COMMISSION_LABEL"
+					description="PLG_SYSTEM_SELLACIOUSAFFILIATES_FIELD_AUTO_APPROVED_COMMISSION_DESC">
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+			<field
+				name="affiliates_payment_day"
+				type="number"
+				default="1"
+				max="31"
+				min="1"
+				step="1"
+				hint="31"
+				validate="number"
+				filter="integer"
+				label="PLG_SYSTEM_SELLACIOUSAFFILIATES_FIELD_PAYMENT_DAY_LABEL"
+				description="PLG_SYSTEM_SELLACIOUSAFFILIATES_FIELD_PAYMENT_DAY_DESC"
+				class="inputbox small-input"/>
+		</fieldset>
+	</fields>
+</form>

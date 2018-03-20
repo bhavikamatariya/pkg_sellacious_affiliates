@@ -11,11 +11,11 @@
 defined('_JEXEC') or die;
 
 /**
- * UserLog Table class
+ * Log Table class
  *
  * @since __DEPLOY_VERSION__
  */
-class AffiliatesTableUserLog extends SellaciousTable
+class AffiliatesTableLog extends SellaciousTable
 {
 	/**
 	 * Constructor
@@ -28,6 +28,6 @@ class AffiliatesTableUserLog extends SellaciousTable
 	 */
 	public function __construct(&$db)
 	{
-		parent::__construct('#__affiliates_user_log', 'id', $db);
+			parent::__construct('#__affiliates_log', 'id', $db);
 	}
 }
